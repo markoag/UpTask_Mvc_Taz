@@ -1,0 +1,115 @@
+@use "base/variables" as v;
+@use "base/mixins" as m;
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: v.$dark;
+  }
+  .tagline,
+  .formulario,
+  .login .acciones a,
+  .crear .acciones a,
+  .olvide .acciones a {
+    color: v.$blanco;
+  }
+  .description-pagina,
+  .formulario .campo input,
+  .nombre-pagina {
+    color: darken(v.$grisClaro, 10%);
+  }
+  .formulario .campo input {
+    background-color: lighten(v.$dark, 15%);
+    color: v.$blanco;
+    &::placeholder {
+        color: darken(v.$grisClaro, 30%);
+      }
+  }
+  .sidebar {
+    @include m.tablet {
+      background-color: darken(v.$dark, 5%);
+    }
+    .sidebar-nav a {
+      &.activo,
+      &:hover {
+        background-color: darken(v.$dark, 10%);
+      }
+    }
+  }
+
+  .barra-mobile,
+  .barra {
+    background-color: darken(v.$dark, 5%);
+  }
+  .barra {
+    p {
+      color: v.$indigo;
+      font-weight: bold;
+      span {
+        color: v.$grisClaro;
+      }
+    }
+    .cerrar-sesion {
+      @include m.boton(v.$morado, v.$blanco);
+      padding: 1rem;
+      font-size: 1.2rem;
+    }
+  }
+  .alerta.error {
+    background-color: v.$blanco;
+  }
+  .filtros {
+    background-color: lighten(v.$dark, 10%);
+    h2,
+    label {
+      color: v.$blanco;
+    }
+    input[type="radio"] {
+      accent-color: v.$dark;
+    }
+  }
+
+  .dashboard {
+    background-color: v.$dark;
+    .enlace {
+      color: v.$grisClaro;
+      &:hover {
+        color: darken(v.$grisClaro, 20%);
+      }
+    }
+    .formulario input:not([type="submit"]) {
+      background-color: lighten(v.$dark, 15%);
+      color: v.$blanco;
+      &::placeholder {
+        color: darken(v.$grisClaro, 30%);
+      }
+    }
+  }
+
+  .listado-proyectos .proyecto {
+    background-color: lighten(v.$dark, 20%);
+    &:hover {
+      background-color: lighten(v.$dark, 10%);
+    }
+  }
+  .listado-tareas .tarea {
+    background-color: lighten(v.$dark, 10%);
+    p {
+      color: v.$grisClaro;
+    }
+  }
+
+  .modal .formulario {
+    background-color: v.$dark;
+    input[type="text"] {
+      background-color: lighten(v.$dark, 15%);
+      border: none;
+      color: v.$blanco;
+      &::placeholder {
+        color: darken(v.$grisClaro, 20%);
+      }
+    }
+    legend {
+      color: v.$grisClaro;
+    }
+  }
+}

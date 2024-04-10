@@ -10,7 +10,9 @@
   }
   .principal {
     flex: 1;
-    overflow: scroll;
+    @include m.tablet {    
+      overflow: scroll;
+    }
   }
   .contenido {
     padding: 2rem;
@@ -32,4 +34,11 @@
       font-size: 1.4rem;
     }
   }
+
+  .enlace {
+    color: v.$indigo;
+    &:hover {
+      color: darken(v.$indigo, 20%);
+    }
+  }  
 }

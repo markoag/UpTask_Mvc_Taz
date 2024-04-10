@@ -35,6 +35,9 @@ $router->get('/nuevo-proyecto', [DashboardController::class, 'nuevo']);
 $router->post('/nuevo-proyecto', [DashboardController::class, 'nuevo']);
 $router->get('/proyecto', [DashboardController::class, 'proyecto']);
 $router->get('/perfil', [DashboardController::class, 'perfil']);
+$router->post('/perfil', [DashboardController::class, 'perfil']);
+$router->get('/cambiar-contrasena', [DashboardController::class, 'cambiar']);
+$router->post('/cambiar-contrasena', [DashboardController::class, 'cambiar']);
 
 // API para tareas
 $router->get('/api/tareas', [TareaController::class, 'index']);

@@ -21,6 +21,8 @@ class Usuario extends ActiveRecord
     public $email;
     public $password;
     public $password2;
+    public $passwordActual;
+    public $passwordNuevo;
     public $confirmado;
     public $token;
     public $createdAt;
@@ -33,6 +35,8 @@ class Usuario extends ActiveRecord
         $this->email = $args['email'] ?? '';
         $this->password = $args['password'] ?? '';
         $this->password2 = $args['password2'] ?? '';
+        $this->passwordActual = $args['passwordActual'] ?? '';
+        $this->passwordNuevo = $args['passwordNuevo'] ?? '';
         $this->confirmado = $args['confirmado'] ?? 0;
         $this->token = $args['token'] ?? '';
         $this->createdAt = $args['createdAt'] ?? null;
@@ -40,7 +44,7 @@ class Usuario extends ActiveRecord
     }
 
     // Validación
-    public function validarNuevaCuenta()
+    public function validarNuevaCuenta() : array
     {
         if (!$this->nombre) {
             self::$alertas['error'][] = "El nombre es obligatorio";
@@ -65,7 +69,7 @@ class Usuario extends ActiveRecord
     }
 
     // Validar Login
-    public function validarLogin()
+    public function validarLogin() : array
     {
         if (!$this->email) {
             self::$alertas['error'][] = "El email es obligatorio";
@@ -79,7 +83,7 @@ class Usuario extends ActiveRecord
     }
 
     // Validar Email
-    public function validarEmail()
+    public function validarEmail() : array
     {
         if (!$this->email) {
             self::$alertas['error'][] = "El email es obligatorio";
@@ -88,14 +92,14 @@ class Usuario extends ActiveRecord
         return self::$alertas;
     }
 
-    public function validarPassword()
+    public function validarPassword() : array
     {
         if (!$this->password) {
-            self::$alertas['error'][] = "El password es obligatorio";
+            self::$alertas['error'][] = "La contraseña es obligatoria";
         }
 
         if (strlen($this->password) < 6) {
-            self::$alertas['error'][] = "El password debe tener al menos 6 caracteres";
+            self::$alertas['error'][] = "La contraseña debe tener al menos 6 caracteres";
         }
 
         if ($this->password !== $this->password2) {
@@ -104,9 +108,55 @@ class Usuario extends ActiveRecord
 
         return self::$alertas;
     }
+    public function nuevoPassword() : array
+    {
+        if (!$this->passwordActual) {
+            self::$alertas['error'][] = "La contraseña actual es obligatorio";
+        }
+
+        if (!$this->passwordNuevo || strlen($this->passwordNuevo) < 6) {
+            self::$alertas['error'][] = "La contraseña nueva es obligatorio o debe tener al menos 6 caracteres";
+        }
+
+        if ($this->passwordNuevo !== $this->password2) {
+            self::$alertas['error'][] = "Las contraseñas no coinciden";
+        }
+
+        if ($this->passwordNuevo && $this->passwordActual && $this->passwordNuevo === $this->passwordActual) {
+            self::$alertas['error'][] = "La contraseña nueva debe ser diferente a la actual";
+        }
+
+        return self::$alertas;
+    }
+
+    // Comprobar el password
+    public function comprobarPassword() : bool
+    {
+        return password_verify($this->passwordActual, $this->password);
+    }
+    public function hashPassword() : void
+    {
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
+    }
+
+    public function validar_perfil() : array
+    {
+        if (!$this->nombre) {
+            self::$alertas['error'][] = "El nombre es obligatorio";
+        }
+
+        if (!$this->email) {
+            self::$alertas['error'][] = "El email es obligatorio";
+        }
+
+        if($this->nombre === $_SESSION['nombre'] && $this->email === $_SESSION['email']) {
+            self::$alertas['error'][] = "No hay cambios que guardar";
+        }
+        return self::$alertas;
+    }
 
     // Verificar si el usuario existe
-    public function existeUsuario()
+    public function existeUsuario() : bool
     {
         $query = "SELECT * FROM " . self::$tabla . " WHERE email = '" . $this->email . "' LIMIT 1";
         $resultado = self::$db->query($query);
@@ -118,13 +168,9 @@ class Usuario extends ActiveRecord
 
         return $resultado;
     }
-
-    public function hashPassword()
-    {
-        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
-    }
+    
     // Generar un token
-    public function generarToken()
+    public function generarToken() : void
     {
         $this->token = bin2hex(random_bytes(20));
     }
